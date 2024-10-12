@@ -20,7 +20,8 @@ def extract_audio(url):
 async def transcribe_audio(file_path):
     """Transcribe audio using Deepgram asynchronously."""
     with open(file_path, 'rb') as audio:
-        response = await dg_client.transcription.prerecorded(audio, {'punctuate': True})
+        source = {'buffer': audio, 'mimetype': 'audio/mpeg'}
+        response = await dg_client.transcription.prerecorded(source, {'punctuate': True})
     return response['results']['channels'][0]['alternatives'][0]['transcript']
 
 def run_async_function(func, *args):
