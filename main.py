@@ -49,6 +49,29 @@ if st.button("Transcribe", key="transcribe_button"):
         # Save transcript to session state
         st.session_state["transcript"] = transcript
 
-# Display the transcript if available
+# Display the transcript with auto-copy on double-click
 if "transcript" in st.session_state:
-    st.text_area("Transcript:", st.session_state["transcript"], height=300, key="transcript_area")
+    transcript_text = st.session_state["transcript"]
+    st.text_area("Transcript:", transcript_text, height=300, key="transcript_area")
+
+    # JavaScript to handle double-click to copy
+    st.markdown(
+        f"""
+        <script>
+        const textarea = document.querySelector('[aria-label="Transcript:"]');
+        textarea.addEventListener('dblclick', function() {{
+            textarea.select();
+            document.execCommand('copy');
+            const copiedMessage = document.getElementById('copied-message');
+            copiedMessage.style.display = 'block';
+            setTimeout(() => {{
+                copiedMessage.style.display = 'none';
+            }}, 2000);
+        }});
+        </script>
+        <div id="copied-message" style="display:none; color:green; margin-top: 10px;">
+            Text copied to clipboard!
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
