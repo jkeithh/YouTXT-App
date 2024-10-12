@@ -1,0 +1,5 @@
+youtube-dl
+openai
+streamlit
+streamlit-quill
+deepgram-sdk
