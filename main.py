@@ -49,25 +49,19 @@ if st.button("Transcribe", key="transcribe_button"):
         # Save transcript to session state
         st.session_state["transcript"] = transcript
 
-# Display transcript and provide copy functionality
-if "transcript" in st.session_state:
-    transcript_text = st.session_state["transcript"]
+        # Display the transcript in a text area
+        st.text_area("Transcript:", transcript, height=300, key="transcript_area")
 
-    # Display the transcript in a text area
-    transcript_area = st.text_area("Transcript:", transcript_text, height=300, key="transcript_area")
-
-    # JavaScript to select and copy text from the textarea
-    copy_js = f"""
-    <script>
-    function copyToClipboard() {{
-        var textArea = document.querySelector('[aria-label="Transcript:"]');
-        textArea.select();
-        document.execCommand('copy');
-        alert('Transcript copied to clipboard!');
-    }}
-    </script>
-    <button onclick="copyToClipboard()">Copy Transcript</button>
-    """
-
-    # Render the JavaScript and button in Streamlit
-    st.markdown(copy_js, unsafe_allow_html=True)
+        # JavaScript to automatically select and copy the transcript text
+        copy_js = """
+        <script>
+        function copyToClipboard() {
+            const textArea = document.querySelector('textarea[aria-label="Transcript:"]');
+            textArea.select();
+            document.execCommand('copy');
+            alert('Transcript copied to clipboard!');
+        }
+        copyToClipboard();
+        </script>
+        """
+        st.markdown(copy_js, unsafe_allow_html=True)
