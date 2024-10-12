@@ -1,8 +1,8 @@
 import streamlit as st
 import yt_dlp as youtube_dl
 from deepgram import Deepgram
-from streamlit_quill import st_quill
 import asyncio
+import pyperclip
 
 # API Key for Deepgram
 DEEPGRAM_API_KEY = 'a0b3e0caed8808979462331899c72fe79eda5ba8'
@@ -42,13 +42,11 @@ if st.button("Transcribe"):
         st.info("Transcribing audio...")
         transcript = run_async_function(transcribe_audio, audio_file)
 
-        # Display transcript and allow editing
-        st.text_area("Transcript:", transcript)
-        edited_text = st_quill(value=transcript, placeholder="Edit the transcript here...")
+        # Display transcript in a text area with copy functionality
+        st.text_area("Transcript:", transcript, height=300)
 
-        if st.button("Save Edited Transcript"):
-            with open("edited_transcript.md", "w") as f:
-                f.write(edited_text)
-            st.success("Transcript saved!")
+        if st.button("Copy Transcript"):
+            pyperclip.copy(transcript)
+            st.success("Transcript copied to clipboard!")
     else:
         st.error("Please enter a valid YouTube URL.")
