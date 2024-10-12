@@ -49,28 +49,34 @@ if st.button("Transcribe", key="transcribe_button"):
         # Save transcript to session state
         st.session_state["transcript"] = transcript
 
-# Display the transcript with auto-copy on double-click
+# Display the transcript and auto-copy it to clipboard
 if "transcript" in st.session_state:
     transcript_text = st.session_state["transcript"]
     st.text_area("Transcript:", transcript_text, height=300, key="transcript_area")
 
-    # JavaScript to handle double-click to copy
+    # JavaScript to auto-select and copy the transcript
     st.markdown(
         f"""
         <script>
-        const textarea = document.querySelector('[aria-label="Transcript:"]');
-        textarea.addEventListener('dblclick', function() {{
-            textarea.select();
-            document.execCommand('copy');
-            const copiedMessage = document.getElementById('copied-message');
-            copiedMessage.style.display = 'block';
-            setTimeout(() => {{
-                copiedMessage.style.display = 'none';
-            }}, 2000);
-        }});
+        function copyToClipboard(text) {{
+            navigator.clipboard.writeText(text).then(function() {{
+                console.log('Copying to clipboard was successful!');
+                const copiedMessage = document.getElementById('copied-message');
+                copiedMessage.style.display = 'block';
+                setTimeout(() => {{
+                    copiedMessage.style.display = 'none';
+                }}, 2000);
+            }}, function(err) {{
+                console.error('Could not copy text: ', err);
+            }});
+        }}
+
+        const transcriptText = `{transcript_text}`;
+        copyToClipboard(transcriptText);
         </script>
+
         <div id="copied-message" style="display:none; color:green; margin-top: 10px;">
-            Text copied to clipboard!
+            Transcript copied to clipboard!
         </div>
         """,
         unsafe_allow_html=True
