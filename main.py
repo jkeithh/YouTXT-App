@@ -1,6 +1,6 @@
 import streamlit as st
 import openai
-import youtube_dl
+import import yt_dlp as youtube_dl
 from deepgram import Deepgram
 from streamlit_quill import st_quill
 
@@ -17,11 +17,15 @@ st.title("YouTXT: Convert YouTube Videos to Text")
 video_url = st.text_input("Enter YouTube URL:")
 
 def extract_audio(url):
-    """Extract audio from the given YouTube URL using youtube-dl."""
-    ydl_opts = {'format': 'bestaudio', 'outtmpl': 'audio.mp3'}
+    """Extract audio from the given YouTube URL using yt-dlp."""
+    ydl_opts = {
+        'format': 'bestaudio',
+        'outtmpl': 'audio.mp3'
+    }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
     return 'audio.mp3'
+
 
 if st.button("Transcribe"):
     if video_url:
