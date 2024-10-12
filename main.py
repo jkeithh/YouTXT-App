@@ -2,6 +2,7 @@ import streamlit as st
 import yt_dlp as youtube_dl
 from deepgram import Deepgram
 from streamlit_quill import st_quill
+import asyncio
 
 # API Key for Deepgram
 DEEPGRAM_API_KEY = 'a0b3e0caed8808979462331899c72fe79eda5ba8'
@@ -16,11 +17,17 @@ def extract_audio(url):
         ydl.download([url])
     return 'audio.mp3'
 
-def transcribe_audio(file_path):
-    """Transcribe audio using Deepgram."""
+async def transcribe_audio(file_path):
+    """Transcribe audio using Deepgram asynchronously."""
     with open(file_path, 'rb') as audio:
-        response = dg_client.transcription.prerecorded(audio, {'punctuate': True})
+        response = await dg_client.transcription.prerecorded(audio, {'punctuate': True})
     return response['results']['channels'][0]['alternatives'][0]['transcript']
+
+def run_async_function(func, *args):
+    """Helper function to run async code inside a synchronous context."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    return loop.run_until_complete(func(*args))
 
 # Streamlit App Interface
 st.title("YouTXT: Convert YouTube Videos to Text")
@@ -32,12 +39,12 @@ if st.button("Transcribe"):
         audio_file = extract_audio(video_url)
 
         st.info("Transcribing audio...")
-        transcript = transcribe_audio(audio_file)
+        transcript = run_async_function(transcribe_audio, audio_file)
 
         # Display transcript and allow editing
         st.text_area("Transcript:", transcript)
         edited_text = st_quill(value=transcript, placeholder="Edit the transcript here...")
-        
+
         if st.button("Save Edited Transcript"):
             with open("edited_transcript.md", "w") as f:
                 f.write(edited_text)
