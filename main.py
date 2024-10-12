@@ -42,7 +42,7 @@ if st.button("Transcribe"):
         st.info("Transcribing audio...")
         transcript = run_async_function(transcribe_audio, audio_file)
 
-        # Display transcript in a text area with copy functionality
+        # Display transcript with a copy button
         st.text_area("Transcript:", transcript, height=300)
 
         if st.button("Copy Transcript"):
@@ -50,3 +50,4 @@ if st.button("Transcribe"):
             st.success("Transcript copied to clipboard!")
     else:
         st.error("Please enter a valid YouTube URL.")
+
