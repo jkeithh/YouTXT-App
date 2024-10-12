@@ -48,27 +48,26 @@ if st.button("Transcribe", key="transcribe_button"):
         st.info("Transcribing audio...")
         transcript = run_async_function(transcribe_audio, audio_file)
 
-        # Display the transcript in a text area
-        st.text_area("Transcript:", transcript, height=300, key="transcript_area")
+        # Save transcript in session state for easy access
+        st.session_state["transcript"] = transcript
 
-        # Improved JavaScript-based Copy Button
+# Display the transcript if available
+if "transcript" in st.session_state:
+    st.text_area("Transcript:", st.session_state["transcript"], height=300, key="transcript_area")
+
+    # Add a button to copy the transcript to the clipboard
+    if st.button("Copy Transcript"):
+        # Use Streamlit's `st.session_state` to copy the transcript
+        st.session_state["copied"] = st.session_state["transcript"]
+        st.success("Transcript copied to clipboard! You can now paste it anywhere.")
+        
+        # Execute the copy-to-clipboard logic
         st.markdown(
             f"""
-            <textarea id="transcript" style="display:none;">{transcript}</textarea>
-            <button id="copy_button">Copy Transcript</button>
             <script>
-                const copyButton = document.getElementById('copy_button');
-                copyButton.addEventListener('click', () => {{
-                    const transcript = document.getElementById('transcript').value;
-                    navigator.clipboard.writeText(transcript).then(() => {{
-                        alert('Transcript copied to clipboard!');
-                    }}).catch(err => {{
-                        console.error('Failed to copy:', err);
-                    }});
-                }});
+                navigator.clipboard.writeText("{st.session_state['transcript']}");
             </script>
             """,
             unsafe_allow_html=True,
         )
-    else:
-        st.error("Please enter a valid YouTube URL.")
+
