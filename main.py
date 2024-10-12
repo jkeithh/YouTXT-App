@@ -12,10 +12,8 @@ dg_client = Deepgram(DEEPGRAM_API_KEY)
 
 def extract_audio(url):
     """Extract audio from the given YouTube URL using yt-dlp."""
-    # Remove existing audio file if it exists
     if os.path.exists("audio.mp3"):
-        os.remove("audio.mp3")
-
+        os.remove("audio.mp3")  # Clear previous downloads
     ydl_opts = {'format': 'bestaudio', 'outtmpl': 'audio.mp3'}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
@@ -48,26 +46,25 @@ if st.button("Transcribe", key="transcribe_button"):
         st.info("Transcribing audio...")
         transcript = run_async_function(transcribe_audio, audio_file)
 
-        # Save transcript in session state for easy access
+        # Save transcript to session state
         st.session_state["transcript"] = transcript
 
 # Display the transcript if available
 if "transcript" in st.session_state:
     st.text_area("Transcript:", st.session_state["transcript"], height=300, key="transcript_area")
 
-    # Add a button to copy the transcript to the clipboard
-    if st.button("Copy Transcript"):
-        # Use Streamlit's `st.session_state` to copy the transcript
-        st.session_state["copied"] = st.session_state["transcript"]
-        st.success("Transcript copied to clipboard! You can now paste it anywhere.")
-        
-        # Execute the copy-to-clipboard logic
-        st.markdown(
-            f"""
-            <script>
-                navigator.clipboard.writeText("{st.session_state['transcript']}");
-            </script>
-            """,
-            unsafe_allow_html=True,
-        )
+    # Add a copy button with JavaScript to select and copy the transcript
+    copy_script = """
+        <script>
+        function copyToClipboard() {
+            const textarea = document.getElementById("transcript_area");
+            textarea.select();
+            document.execCommand("copy");
+            alert("Transcript copied to clipboard!");
+        }
+        </script>
+        <button onclick="copyToClipboard()">Copy Transcript</button>
+    """
 
+    # Render the JavaScript-based button
+    st.markdown(copy_script, unsafe_allow_html=True)
