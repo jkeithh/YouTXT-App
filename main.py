@@ -2,7 +2,6 @@ import streamlit as st
 import yt_dlp as youtube_dl
 from deepgram import Deepgram
 import asyncio
-import pyperclip
 
 # API Key for Deepgram
 DEEPGRAM_API_KEY = 'a0b3e0caed8808979462331899c72fe79eda5ba8'
@@ -32,9 +31,11 @@ def run_async_function(func, *args):
 
 # Streamlit App Interface
 st.title("YouTXT: Convert YouTube Videos to Text")
-video_url = st.text_input("Enter YouTube URL:")
 
-if st.button("Transcribe"):
+# Input for YouTube URL
+video_url = st.text_input("Enter YouTube URL:", key="youtube_url")
+
+if st.button("Transcribe", key="transcribe_button"):
     if video_url:
         st.info("Extracting audio...")
         audio_file = extract_audio(video_url)
@@ -42,12 +43,25 @@ if st.button("Transcribe"):
         st.info("Transcribing audio...")
         transcript = run_async_function(transcribe_audio, audio_file)
 
-        # Display transcript with a copy button
-        st.text_area("Transcript:", transcript, height=300)
+        # Display the transcript in a text area
+        st.text_area("Transcript:", transcript, height=300, key="transcript_area")
 
-        if st.button("Copy Transcript"):
-            pyperclip.copy(transcript)
-            st.success("Transcript copied to clipboard!")
+        # JavaScript-based Copy Button
+        st.markdown(
+            """
+            <button onclick="copyToClipboard()">Copy Transcript</button>
+            <script>
+                function copyToClipboard() {
+                    const transcript = document.querySelector('textarea').value;
+                    navigator.clipboard.writeText(transcript).then(() => {
+                        alert('Transcript copied to clipboard!');
+                    }).catch(err => {
+                        alert('Failed to copy: ' + err);
+                    });
+                }
+            </script>
+            """,
+            unsafe_allow_html=True,
+        )
     else:
         st.error("Please enter a valid YouTube URL.")
-
