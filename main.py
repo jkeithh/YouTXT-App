@@ -44,21 +44,22 @@ if st.button("Transcribe", key="transcribe_button"):
         transcript = run_async_function(transcribe_audio, audio_file)
 
         # Display the transcript in a text area
-        st.text_area("Transcript:", transcript, height=300, key="transcript_area")
+        transcript_box = st.text_area("Transcript:", transcript, height=300, key="transcript_area")
 
-        # JavaScript-based Copy Button
+        # JavaScript-based Copy Button with proper ID targeting
         st.markdown(
-            """
-            <button onclick="copyToClipboard()">Copy Transcript</button>
+            f"""
+            <textarea id="transcript" style="display:none;">{transcript}</textarea>
+            <button onclick="copyTranscript()">Copy Transcript</button>
             <script>
-                function copyToClipboard() {
-                    const transcript = document.querySelector('textarea').value;
-                    navigator.clipboard.writeText(transcript).then(() => {
+                function copyTranscript() {{
+                    var transcript = document.getElementById('transcript').value;
+                    navigator.clipboard.writeText(transcript).then(() => {{
                         alert('Transcript copied to clipboard!');
-                    }).catch(err => {
+                    }}).catch(err => {{
                         alert('Failed to copy: ' + err);
-                    });
-                }
+                    }});
+                }}
             </script>
             """,
             unsafe_allow_html=True,
