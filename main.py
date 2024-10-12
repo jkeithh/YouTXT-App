@@ -51,20 +51,21 @@ if st.button("Transcribe", key="transcribe_button"):
         # Display the transcript in a text area
         st.text_area("Transcript:", transcript, height=300, key="transcript_area")
 
-        # JavaScript-based Copy Button
+        # Improved JavaScript-based Copy Button
         st.markdown(
             f"""
             <textarea id="transcript" style="display:none;">{transcript}</textarea>
-            <button onclick="copyTranscript()">Copy Transcript</button>
+            <button id="copy_button">Copy Transcript</button>
             <script>
-                function copyTranscript() {{
-                    var transcript = document.getElementById('transcript').value;
+                const copyButton = document.getElementById('copy_button');
+                copyButton.addEventListener('click', () => {{
+                    const transcript = document.getElementById('transcript').value;
                     navigator.clipboard.writeText(transcript).then(() => {{
                         alert('Transcript copied to clipboard!');
                     }}).catch(err => {{
-                        alert('Failed to copy: ' + err);
+                        console.error('Failed to copy:', err);
                     }});
-                }}
+                }});
             </script>
             """,
             unsafe_allow_html=True,
