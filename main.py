@@ -2,6 +2,7 @@ import streamlit as st
 import yt_dlp as youtube_dl
 from deepgram import Deepgram
 import asyncio
+import os
 
 # API Key for Deepgram
 DEEPGRAM_API_KEY = 'a0b3e0caed8808979462331899c72fe79eda5ba8'
@@ -11,6 +12,10 @@ dg_client = Deepgram(DEEPGRAM_API_KEY)
 
 def extract_audio(url):
     """Extract audio from the given YouTube URL using yt-dlp."""
+    # Remove existing audio file if it exists
+    if os.path.exists("audio.mp3"):
+        os.remove("audio.mp3")
+
     ydl_opts = {'format': 'bestaudio', 'outtmpl': 'audio.mp3'}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
@@ -44,9 +49,9 @@ if st.button("Transcribe", key="transcribe_button"):
         transcript = run_async_function(transcribe_audio, audio_file)
 
         # Display the transcript in a text area
-        transcript_box = st.text_area("Transcript:", transcript, height=300, key="transcript_area")
+        st.text_area("Transcript:", transcript, height=300, key="transcript_area")
 
-        # JavaScript-based Copy Button with proper ID targeting
+        # JavaScript-based Copy Button
         st.markdown(
             f"""
             <textarea id="transcript" style="display:none;">{transcript}</textarea>
