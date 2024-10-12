@@ -5,8 +5,8 @@ from deepgram import Deepgram
 from streamlit_quill import st_quill
 
 # API Keys (Replace these with your own)
-DEEPGRAM_API_KEY = 'your_deepgram_key'
-OPENAI_API_KEY = 'your_openai_key'
+DEEPGRAM_API_KEY = a0b3e0caed8808979462331899c72fe79eda5ba8
+OPENAI_API_KEY = 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
 
 # Initialize APIs
 dg_client = Deepgram(DEEPGRAM_API_KEY)
