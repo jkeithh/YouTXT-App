@@ -49,35 +49,15 @@ if st.button("Transcribe", key="transcribe_button"):
         # Save transcript to session state
         st.session_state["transcript"] = transcript
 
-# Display the transcript and auto-copy it to clipboard
+# Display transcript and provide copy functionality
 if "transcript" in st.session_state:
     transcript_text = st.session_state["transcript"]
+
+    # Display the transcript in a text area
     st.text_area("Transcript:", transcript_text, height=300, key="transcript_area")
 
-    # JavaScript to auto-select and copy the transcript
-    st.markdown(
-        f"""
-        <script>
-        function copyToClipboard(text) {{
-            navigator.clipboard.writeText(text).then(function() {{
-                console.log('Copying to clipboard was successful!');
-                const copiedMessage = document.getElementById('copied-message');
-                copiedMessage.style.display = 'block';
-                setTimeout(() => {{
-                    copiedMessage.style.display = 'none';
-                }}, 2000);
-            }}, function(err) {{
-                console.error('Could not copy text: ', err);
-            }});
-        }}
-
-        const transcriptText = `{transcript_text}`;
-        copyToClipboard(transcriptText);
-        </script>
-
-        <div id="copied-message" style="display:none; color:green; margin-top: 10px;">
-            Transcript copied to clipboard!
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Copy button and confirmation message
+    if st.button("Copy Transcript"):
+        # Set the clipboard content to the transcript
+        st.session_state["clipboard"] = transcript_text
+        st.success("Transcript copied to clipboard!")
