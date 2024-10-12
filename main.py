@@ -51,23 +51,4 @@ if st.button("Transcribe", key="transcribe_button"):
 
 # Display the transcript if available
 if "transcript" in st.session_state:
-    transcript = st.session_state["transcript"]
-    st.text_area("Transcript:", transcript, height=300, key="transcript_area")
-
-    # JavaScript to copy text to clipboard
-    copy_script = f"""
-        <script>
-        function copyToClipboard() {{
-            const text = `{transcript}`;  // Use backticks for multiline handling
-            navigator.clipboard.writeText(text).then(() => {{
-                alert('Transcript copied to clipboard!');
-            }}).catch(err => {{
-                console.error('Failed to copy: ', err);
-            }});
-        }}
-        </script>
-        <button onclick="copyToClipboard()">Copy Transcript</button>
-    """
-
-    # Render the JavaScript-based button
-    st.markdown(copy_script, unsafe_allow_html=True)
+    st.text_area("Transcript:", st.session_state["transcript"], height=300, key="transcript_area")
