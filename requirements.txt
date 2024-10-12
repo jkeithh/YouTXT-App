@@ -2,4 +2,4 @@ youtube-dl
 openai
 streamlit
 streamlit-quill
-deepgram-sdk
+deepgram-sdk==2.12.0
